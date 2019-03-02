@@ -1,5 +1,7 @@
 import tkinter as tk
 
+IMAGES = ['', 'iot', 'north_korea', 'clover', 'awaken']
+
 class App(tk.Frame):
     def __init__(self, master):
         tk.Frame.__init__(self, master)
@@ -24,6 +26,27 @@ class App(tk.Frame):
 
         tk.Label(dialog_frame, text="This is your first GUI. (highfive)").pack()
 
+        # show default image
+        self.label = tk.Label()
+        self.showImage()
+
+        # selections
+        self.var = tk.IntVar()
+        tk.Radiobutton(root,
+              text="Internet-of-Thing",
+              padx = 20,
+              variable=self.var,
+              command=self.sel,
+              value=1).pack(anchor=tk.W)
+
+        tk.Radiobutton(root,
+              text="North_Korea_Nuclear",
+              padx = 20,
+              variable=self.var,
+              command=self.sel,
+              value=2).pack(anchor=tk.W)
+
+
         button_frame = tk.Frame(self)
         button_frame.pack(padx=15, pady=(0, 15), anchor='e')
 
@@ -38,6 +61,15 @@ class App(tk.Frame):
         print("The user clicked 'Cancel'")
         self.master.destroy()
 
+    def sel(self):
+        selection = self.var.get()
+        self.showImage(selection)
+
+    def showImage(self, idx = 1):
+        img = tk.PhotoImage(file=IMAGES[idx]+".png")
+        self.label.image = img
+        self.label.configure(image=img)
+        self.label.pack()
 
 if __name__ == '__main__':
 
