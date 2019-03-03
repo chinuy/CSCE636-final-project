@@ -1,6 +1,8 @@
 import tkinter as tk
+from tkinter.filedialog import askopenfilename
 
-IMAGES = ['', 'iot', 'north_korea', 'clover', 'awaken']
+IMAGES = ['iot', 'north_korea', 'clover', 'awaken']
+mock_botton = ["Internet-of-Thing", "North_Korea_Nuclear", "Clover-10", "Movie-Awaken my Love"]
 TITLE = "Wikipedia traffic prediction"
 
 class App(tk.Frame):
@@ -44,52 +46,37 @@ class App(tk.Frame):
         sel_frame = tk.Frame(sel_major_frame)
         sel_frame.pack(padx=15, side="left")#, pady=(100, 15), anchor='e')
         self.var = tk.IntVar()
-        tk.Radiobutton(sel_frame,
-              text="Internet-of-Thing",
-              padx = 20,
-              variable=self.var,
-              command=self.sel,
-              value=1).pack(anchor=tk.W)
+        for i, button_item in enumerate(mock_botton):
+            tk.Radiobutton(sel_frame,
+                  text=button_item,
+                  padx = 20,
+                  variable=self.var,
+                  command=self.sel,
+                  value=i).pack(anchor=tk.W)
 
-        tk.Radiobutton(sel_frame,
-              text="North_Korea_Nuclear",
-              padx = 20,
-              variable=self.var,
-              command=self.sel,
-              value=2).pack(anchor=tk.W)
-
-        tk.Radiobutton(sel_frame,
-              text="Clover-10",
-              padx = 20,
-              variable=self.var,
-              command=self.sel,
-              value=3).pack(anchor=tk.W)
-
-        tk.Radiobutton(sel_frame,
-              text="Awake",
-              padx = 20,
-              variable=self.var,
-              command=self.sel,
-              value=4).pack(anchor=tk.W)
-
-        ## lagged day
+        ## pick x day to predict in the future
 
         dialog_frame = tk.Frame(sel_major_frame)
         dialog_frame.pack(side="right")
         # dialog_frame.pack(padx=20, pady=15)
 
-        tk.Label(dialog_frame, text="Lagged day").pack()
-        w2 = tk.Scale(dialog_frame, from_=1, to=14)#, orient=tk.HORIZONTAL)
+        self.future_day = tk.StringVar()
+        self.future_day.set("Predict {} day traffic in future".format(5))
+        w2 = tk.Scale(dialog_frame, from_=1, to=14, command=self.update_future_day)#, orient=tk.HORIZONTAL)
         w2.set(5)
         w2.pack()
+        t1 = tk.Label(dialog_frame, textvariable=self.future_day).pack()
 
 
-        # button_frame = tk.Frame(self)
-        # button_frame.pack(padx=15, pady=(0, 15), anchor='e')
+        button_frame = tk.Frame(self)
+        button_frame.pack()#padx=15, pady=(0, 15), anchor='e')
 
         # tk.Button(button_frame, text='OK', default='active', command=self.click_ok).pack(side='right')
 
         # tk.Button(button_frame, text='Close', command=self.click_cancel).pack(side='right')
+        self.input_filename = tk.StringVar()
+        tk.Button(button_frame, text ='Open', command = self.inputCSV).pack(side="left")
+        tk.Button(button_frame, text ='Predict', command = self.Predict).pack(side="left")
 
     def click_ok(self, event=None):
         print("The user clicked 'OK'")
@@ -98,14 +85,26 @@ class App(tk.Frame):
         print("The user clicked 'Cancel'")
         self.master.destroy()
 
+    def update_future_day(self, val):
+        self.future_day.set("Predict {} day traffic in future".format(val))
+
     def sel(self):
         selection = self.var.get()
         self.showImage(selection)
 
-    def showImage(self, idx = 1):
+    def showImage(self, idx = 0):
         img = tk.PhotoImage(file=IMAGES[idx]+".png")
         self.label.image = img
         self.label.configure(image=img)
+
+    def inputCSV(self):
+        File = askopenfilename(title='Opne Input traffic trace')
+        self.input_filename.set(File)
+
+    def Predict(self):
+        print("user hit the prediction button")
+        # model = load_model(".h5")
+        # model.predict()
 
 if __name__ == '__main__':
 
