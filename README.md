@@ -6,6 +6,10 @@
 
 Youtube link: https://youtu.be/G3Aeayh6--w
 
+## Execution of GUI
+
+```python3 gui.py```
+
 ## Introduction
 The web traffic time series forecasting competition is on [Kaggle](https://www.kaggle.com/c/web-traffic-time-series-forecasting).
 The training data has over 145k wikipedia pages associated with traffic of 551 days.
