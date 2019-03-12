@@ -1,12 +1,27 @@
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 
+
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+# Implement the default Matplotlib key bindings.
+from matplotlib.backend_bases import key_press_handler
+from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
+
+
+import numpy as np
+import pandas as pd
+
+from predictor import Predictor
+
 IMAGES = ['iot', 'north_korea', 'clover', 'awaken']
 mock_botton = ["Internet-of-Thing", "North_Korea_Nuclear", "Clover-10", "Movie-Awaken my Love"]
 TITLE = "Wikipedia traffic prediction"
 
 class App(tk.Frame):
     def __init__(self, master):
+        self.predictor = Predictor()
+
         tk.Frame.__init__(self, master)
         self.pack()
         self.master.title(TITLE)
@@ -31,11 +46,17 @@ class App(tk.Frame):
         # tk.Label(dialog_frame, text="Wikipedia traffic prediction").pack()
 
         # show default image
-        img_frame = tk.Frame(self, relief=tk.RAISED, borderwidth=1)
-        img_frame.pack()#fill=tk.BOTH, expand=True)
-        self.label = tk.Label(img_frame)
-        self.label.pack()#side="left")
-        self.showImage()
+        # img_frame = tk.Frame(self, relief=tk.RAISED, borderwidth=1)
+        # img_frame.pack()#fill=tk.BOTH, expand=True)
+        # self.label = tk.Label(img_frame)
+        # self.label.pack()#side="left")
+        # self.showImage()
+        self.figure = plt.Figure(figsize=(6,5), dpi=100)
+        self.ax = self.figure.add_subplot(111)
+
+        self.canvas = FigureCanvasTkAgg(self.figure, self)
+        self.canvas.get_tk_widget().pack()
+
 
         # radio button selections
         sel_major_frame = tk.Frame(self)
@@ -45,12 +66,12 @@ class App(tk.Frame):
 
         sel_frame = tk.Frame(sel_major_frame)
         sel_frame.pack(padx=15, side="left")#, pady=(100, 15), anchor='e')
-        self.var = tk.IntVar()
+        self.selection = tk.IntVar()
         for i, button_item in enumerate(mock_botton):
             tk.Radiobutton(sel_frame,
                   text=button_item,
                   padx = 20,
-                  variable=self.var,
+                  variable=self.selection,
                   command=self.sel,
                   value=i).pack(anchor=tk.W)
 
@@ -76,7 +97,7 @@ class App(tk.Frame):
         # tk.Button(button_frame, text='Close', command=self.click_cancel).pack(side='right')
         self.input_filename = tk.StringVar()
         tk.Button(button_frame, text ='Open', command = self.inputCSV).pack(side="left")
-        tk.Button(button_frame, text ='Predict', command = self.Predict).pack(side="left")
+        tk.Button(button_frame, text ='Predict', command = self.predict).pack(side="left")
 
     def click_ok(self, event=None):
         print("The user clicked 'OK'")
@@ -89,20 +110,27 @@ class App(tk.Frame):
         self.future_day.set("Predict {} day traffic in future".format(val))
 
     def sel(self):
-        selection = self.var.get()
-        self.showImage(selection)
+        selection = self.selection.get()
+        self.predict(selection)
 
     def showImage(self, idx = 0):
         img = tk.PhotoImage(file=IMAGES[idx]+".png")
         self.label.image = img
         self.label.configure(image=img)
 
+
     def inputCSV(self):
         File = askopenfilename(title='Opne Input traffic trace')
         self.input_filename.set(File)
+        self.df = pd.read_csv(self.input_filename.get()).fillna(0)
+        self.predict()
 
-    def Predict(self):
-        print("user hit the prediction button")
+    def predict(self, i = 0):
+        target = self.df.iloc[i]
+        self.ax.clear()
+        self.predictor.predict(target[0], target[1:], self.ax)
+        self.canvas.draw()
+
         # model = load_model(".h5")
         # model.predict()
 
