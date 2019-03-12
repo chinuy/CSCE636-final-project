@@ -34,8 +34,8 @@ class App(tk.Frame):
 
         x = (self.master.winfo_screenwidth() - self.master.winfo_reqwidth()) / 2
         y = (self.master.winfo_screenheight() - self.master.winfo_reqheight()) / 3
-        # self.master.geometry("+{}+{}".format(x, y))
-        self.master.geometry("800x600+30+30")
+        self.master.geometry("+{}+{}".format(x, y))
+        # self.master.geometry("800x600+30+30")
 
         self.master.config(menu=tk.Menu(self.master))
 
@@ -130,9 +130,6 @@ class App(tk.Frame):
         self.ax.clear()
         self.predictor.predict(target[0], target[1:], self.ax)
         self.canvas.draw()
-
-        # model = load_model(".h5")
-        # model.predict()
 
 if __name__ == '__main__':
 

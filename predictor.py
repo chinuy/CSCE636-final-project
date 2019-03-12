@@ -28,7 +28,7 @@ class Predictor(object):
         model = load_model(fn)
         return model
 
-    def predict(self, name, dataset_raw):
+    def predict(self, name, dataset_raw, figure):
         # evaluate model and get scores
         n_input = 7
         n_output = 14
@@ -61,17 +61,19 @@ class Predictor(object):
         testPredictPlot[:] = np.nan
         testPredictPlot[start_day:start_day+n_output] = testPred
 
-        plt.plot(dataset_raw.values[:start_day], label="history")
-        plt.plot(truePredictPlot, label="real")
-        plt.plot(testPredictPlot, label="pred")
+        # ax = figure.add_subplot(111)
+        ax = figure
+        ax.plot(dataset_raw.values[:start_day], label="history")
+        ax.plot(truePredictPlot, label="real")
+        ax.plot(testPredictPlot, label="pred")
 
-        plt.title(name)
-        plt.xlabel("days")
-        plt.ylabel("num of visit")
-        plt.legend()
+        ax.set_title(name)
+        ax.set_xlabel("days")
+        ax.set_ylabel("num of visit")
+        ax.legend()
         # plt.xlim(400, 550)
         # plt.autoscale(axis='y')
-        plt.show()
+        # plt.show()
 
 """## Simpe LSTM"""
 
