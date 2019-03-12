@@ -45,10 +45,11 @@ class Predictor(object):
         testPred = self.model.predict(test)
         testPred = self.unlog(testPred * std + mean)
         testPred = testPred[0]
-        print(testPred, test_raw[-n_output:])
+        # print(testPred, test_raw[-n_output:])
 
         mse = mean_squared_error(testPred, test_raw[-n_output:])
-        print("MSE:", mse)
+        mae = sum(abs(testPred - test_raw[-n_output:])) / n_output
+        # print("MSE:", mse)
 
         start_day = len(dataset) - cut_day
 
@@ -74,6 +75,7 @@ class Predictor(object):
         # plt.xlim(400, 550)
         # plt.autoscale(axis='y')
         # plt.show()
+        return mae
 
 """## Simpe LSTM"""
 

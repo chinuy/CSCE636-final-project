@@ -34,8 +34,8 @@ class App(tk.Frame):
 
         x = (self.master.winfo_screenwidth() - self.master.winfo_reqwidth()) / 2
         y = (self.master.winfo_screenheight() - self.master.winfo_reqheight()) / 3
-        self.master.geometry("+{}+{}".format(x, y))
-        # self.master.geometry("800x600+30+30")
+        # self.master.geometry("+{}+{}".format(x, y))
+        self.master.geometry("800x600+30+30")
 
         self.master.config(menu=tk.Menu(self.master))
 
@@ -43,19 +43,22 @@ class App(tk.Frame):
         # dialog_frame.pack(padx=20, pady=15)
 
         # tk.Label(dialog_frame, text="This is your first GUI. (highfive)").pack()
-        # tk.Label(dialog_frame, text="Wikipedia traffic prediction").pack()
 
         # show default image
-        # img_frame = tk.Frame(self, relief=tk.RAISED, borderwidth=1)
-        # img_frame.pack()#fill=tk.BOTH, expand=True)
+        img_frame = tk.Frame(self, relief=tk.RAISED, borderwidth=1)
+        img_frame.pack()#fill=tk.BOTH, expand=True)
         # self.label = tk.Label(img_frame)
         # self.label.pack()#side="left")
         # self.showImage()
-        self.figure = plt.Figure(figsize=(6,5), dpi=100)
+        self.figure = plt.Figure(figsize=(6,4), dpi=100)
         self.ax = self.figure.add_subplot(111)
 
-        self.canvas = FigureCanvasTkAgg(self.figure, self)
+        self.canvas = FigureCanvasTkAgg(self.figure, img_frame)
         self.canvas.get_tk_widget().pack()
+
+        self.mse = tk.StringVar()
+        self.mse.set("Mean Absolute Error is: {}".format(0))
+        t1 = tk.Label(img_frame, textvariable=self.mse).pack()
 
 
         # radio button selections
@@ -128,7 +131,8 @@ class App(tk.Frame):
     def predict(self, i = 0):
         target = self.df.iloc[i]
         self.ax.clear()
-        self.predictor.predict(target[0], target[1:], self.ax)
+        mse = self.predictor.predict(target[0], target[1:], self.ax)
+        self.mse.set("Mean Absolute Error is: {}".format(mse))
         self.canvas.draw()
 
 if __name__ == '__main__':
