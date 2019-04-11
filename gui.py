@@ -14,8 +14,6 @@ import pandas as pd
 
 from predictor import Predictor
 
-IMAGES = ['iot', 'north_korea', 'clover', 'awaken']
-mock_botton = ["Internet-of-Thing", "North_Korea_Nuclear", "Clover-10", "Movie-Awaken my Love"]
 TITLE = "Wikipedia traffic prediction"
 
 class App(tk.Frame):
@@ -46,11 +44,11 @@ class App(tk.Frame):
 
         # show default image
         img_frame = tk.Frame(self, relief=tk.RAISED, borderwidth=1)
-        img_frame.pack()#fill=tk.BOTH, expand=True)
+        img_frame.pack(pady=5)#fill=tk.BOTH, expand=True)
         # self.label = tk.Label(img_frame)
         # self.label.pack()#side="left")
         # self.showImage()
-        self.figure = plt.Figure(figsize=(6,4), dpi=100)
+        self.figure = plt.Figure(figsize=(6,3), dpi=100)
         self.ax = self.figure.add_subplot(111)
 
         self.canvas = FigureCanvasTkAgg(self.figure, img_frame)
@@ -58,8 +56,23 @@ class App(tk.Frame):
 
         self.mse = tk.StringVar()
         self.mse.set("Mean Absolute Error is: {}".format(0))
-        t1 = tk.Label(img_frame, textvariable=self.mse).pack()
+        t1 = tk.Label(self, textvariable=self.mse).pack()
 
+        button_frame = tk.Frame(self)
+        button_frame.pack()#padx=15, pady=(0, 15), anchor='e')
+
+        # tk.Button(button_frame, text='OK', default='active', command=self.click_ok).pack(side='right')
+
+        # tk.Button(button_frame, text='Close', command=self.click_cancel).pack(side='right')
+        self.input_filename = tk.StringVar()
+
+        # do a default file opening and prediction
+        self.df = pd.read_csv('demo.csv').fillna(0)
+        page_options = self.df['Page']
+        self.predict()
+
+        tk.Button(button_frame, text ='Open', command = self.inputCSV).pack(side="left")
+        tk.Button(button_frame, text ='Predict', command = self.predict).pack(side="left")
 
         # radio button selections
         sel_major_frame = tk.Frame(self)
@@ -70,7 +83,7 @@ class App(tk.Frame):
         sel_frame = tk.Frame(sel_major_frame)
         sel_frame.pack(padx=15, side="left")#, pady=(100, 15), anchor='e')
         self.selection = tk.IntVar()
-        for i, button_item in enumerate(mock_botton):
+        for i, button_item in enumerate(page_options):
             tk.Radiobutton(sel_frame,
                   text=button_item,
                   padx = 20,
@@ -79,28 +92,16 @@ class App(tk.Frame):
                   value=i).pack(anchor=tk.W)
 
         ## pick x day to predict in the future
-
-        dialog_frame = tk.Frame(sel_major_frame)
-        dialog_frame.pack(side="right")
+        # dialog_frame = tk.Frame(sel_major_frame)
+        # dialog_frame.pack(side="right")
         # dialog_frame.pack(padx=20, pady=15)
 
-        self.future_day = tk.StringVar()
-        self.future_day.set("Predict {} day traffic in future".format(5))
-        w2 = tk.Scale(dialog_frame, from_=1, to=14, command=self.update_future_day)#, orient=tk.HORIZONTAL)
-        w2.set(5)
-        w2.pack()
-        t1 = tk.Label(dialog_frame, textvariable=self.future_day).pack()
-
-
-        button_frame = tk.Frame(self)
-        button_frame.pack()#padx=15, pady=(0, 15), anchor='e')
-
-        # tk.Button(button_frame, text='OK', default='active', command=self.click_ok).pack(side='right')
-
-        # tk.Button(button_frame, text='Close', command=self.click_cancel).pack(side='right')
-        self.input_filename = tk.StringVar()
-        tk.Button(button_frame, text ='Open', command = self.inputCSV).pack(side="left")
-        tk.Button(button_frame, text ='Predict', command = self.predict).pack(side="left")
+        # self.future_day = tk.StringVar()
+        # self.future_day.set("Predict {} day traffic in future".format(5))
+        # w2 = tk.Scale(dialog_frame, from_=1, to=14, command=self.update_future_day)#, orient=tk.HORIZONTAL)
+        # w2.set(5)
+        # w2.pack()
+        # t1 = tk.Label(dialog_frame, textvariable=self.future_day).pack()
 
     def click_ok(self, event=None):
         print("The user clicked 'OK'")
@@ -116,12 +117,6 @@ class App(tk.Frame):
         selection = self.selection.get()
         self.predict(selection)
 
-    def showImage(self, idx = 0):
-        img = tk.PhotoImage(file=IMAGES[idx]+".png")
-        self.label.image = img
-        self.label.configure(image=img)
-
-
     def inputCSV(self):
         File = askopenfilename(title='Opne Input traffic trace')
         self.input_filename.set(File)
@@ -129,9 +124,9 @@ class App(tk.Frame):
         self.predict()
 
     def predict(self, i = 0):
-        target = self.df.iloc[i]
+        target = self.df.iloc[i:i+1]
         self.ax.clear()
-        mse = self.predictor.predict(target[0], target[1:], self.ax)
+        mse = self.predictor.predict(target, self.ax)
         self.mse.set("Mean Absolute Error is: {}".format(mse))
         self.canvas.draw()
 
