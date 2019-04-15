@@ -11,11 +11,27 @@ Youtube link: https://youtu.be/G3Aeayh6--w
 
 The web traffic time series forecasting is a competition on [Kaggle](https://www.kaggle.com/c/web-traffic-time-series-forecasting).
 
+The objective is to minimize the Symmetric Mean Absolute Percent Error [(SMAPE)](http://www.vanguardsw.com/business-forecasting-101/symmetric-mean-absolute-percent-error-smape/). An advantage of using SMAPE score to reduce the impact due to low volume item.
+
+## Achievement summary
+
+The project started using a python notebook from 2nd place author as the boilplate.
+It's a simplified version of the author's solution. And the author also adopt xgboost to learn and produce final result.
+My work is purely using deep neural network to produce the final result.
+
+The SMAPE score of the cross-validation of the orignal notebook was 0.439, while after my work, the SMAPE score is 0.394.
+The final submission result in Kaggle was 0.3820, which was 15th place out of 375 teams.
+
+My work has 3 parts:
+1. New neural network architecture
+2. Using mean-absolute-error as loss function as SMAPE is not differciable when error > 0
+3. Feature engineering
+
 ### Dataset
 The training data has over 145k wikipedia pages associated with traffic of 793 days.
 The prediction objective is given an user-interested page, predict the next 63 days traffic.
-- Training data from 2015-07-01 to 2017-09-01
-- Testing data from 2017-09-10 to 2017-11-10
+- Training data from 2015-07-01 to 2017-09-10
+- Testing data from 2017-09-13 to 2017-11-10
 
 The dataset contains traffic history of:
 - 7 languages
