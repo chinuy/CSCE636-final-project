@@ -46,7 +46,7 @@ Simply execute the python program
 
 ## The GUI functionality
 Following is a screenshot of my GUI.
-![](screen1.png)
+![](screenshot.png)
 
 The GUI has two sections.
 - Top section is display section, which shows the network traffic of the user-interested page, including both the historical and predicted traffic.
