@@ -1,17 +1,10 @@
-# CSCE636 Nueral Network Final project Demo
+![](figures/predict_5000.png)
 
-**Topic: Web Traffic Time Series Forecasting**
-
--- Chih-Peng Wu, 221000528
-
-Youtube link: https://youtu.be/G3Aeayh6--w
-
-## Topic and goal
-![](result.png)
+Python Jupyter Notebook for 
 
 The web traffic time series forecasting is a competition on [Kaggle](https://www.kaggle.com/c/web-traffic-time-series-forecasting).
 
-The objective is to minimize the Symmetric Mean Absolute Percent Error [(SMAPE)](http://www.vanguardsw.com/business-forecasting-101/symmetric-mean-absolute-percent-error-smape/). An advantage of using SMAPE score to reduce the impact due to low volume item.
+Youtube link: https://youtu.be/G3Aeayh6--w
 
 ## Achievement summary
 
@@ -38,62 +31,11 @@ The dataset contains traffic history of:
 - 3 access (all, desktop, mobile-web)
 - 2 types (all-agents, spider)
 
-## DNN Model
-
-### Architecture
-
-My model is built using Keras sequential models.
-There are 3 types of layers:
-1. One Conv1D layer to extract nearby days information
-2. Two Gated-Recurrent Unit (GRU) layers to learn the time-series patterns
-3. Two Dense layers to consolidate the patterns and produce prediction
-
-A snippet of code of constructing the model is shown as follow:
-```
-    model = Sequential()
-
-    model.add(Conv1D(420, kernel_size=3, activation='relu'))
-    model.add(AveragePooling1D(pool_size=2))
-    model.add(GRU(210, activation='relu', input_shape=(n_timesteps, n_features), return_sequences=True))
-    model.add(Dropout(rate=0.25))
-    model.add(GRU(140, activation='relu', input_shape=(n_timesteps, n_features)))
-    model.add(Dropout(rate=0.25))
-    model.add(Dense(100, activation='relu'))
-    model.add(Dense(n_outputs))
-    model.compile(loss='mean_absolute_error', optimizer='adam')
-```
-### Model Summary
-```
-Layer (type)                 Output Shape              Param #   
-=================================================================
-conv1d_1 (Conv1D)            (None, 138, 420)          7980      
-_________________________________________________________________
-average_pooling1d_1 (Average (None, 69, 420)           0         
-_________________________________________________________________
-gru_1 (GRU)                  (None, 69, 210)           397530    
-_________________________________________________________________
-dropout_1 (Dropout)          (None, 69, 210)           0         
-_________________________________________________________________
-gru_2 (GRU)                  (None, 140)               147420    
-_________________________________________________________________
-dropout_2 (Dropout)          (None, 140)               0         
-_________________________________________________________________
-dense_1 (Dense)              (None, 100)               14100     
-_________________________________________________________________
-dense_2 (Dense)              (None, 63)                6363      
-=================================================================
-Total params: 573,393
-```
-
-### Input: Shape of Tensor
-trainX shape is (n, 140, 6)
-testX shape is (n, 140, 6)
-
-### Output: Shape of Tensor
-trainY shape is (n, 63)
-testY shape is (n, 63)
-
-### Shape Output Tensor for Each Layer
+### How to run
+1. Clone the repo
+2. Download the training/submission dataset from the [Kaggle compeition page](https://www.kaggle.com/c/web-traffic-time-series-forecasting/data) and unzip it to **data** folder
+3. Run the **cross_validation.ipynb** to get the cross-validation result and the train the model
+4. Run the **submission.ipynb** to load the trained model and predict the next 63 days result. The predictioin result will be placed at **submission** folder.
 
 ## Execution of GUI
 
