@@ -1,4 +1,4 @@
-![](figres/predict_5000.png)
+![](figures/predict_5000.png)
 
 Python Jupyter Notebook for 
 
